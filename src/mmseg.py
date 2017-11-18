@@ -12,6 +12,7 @@ import math
 
 dict_word = {}
 max_word_length = 0
+_curpath = os.path.normpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 def load_dict_chars(fpath):
     global max_word_length
@@ -42,16 +43,16 @@ def get_dict_word(word):
     return None
 
 def load_dict():
-    load_dict_chars('./chars.dic')
-    load_dict_words('./words.dic')
+    load_dict_chars(os.path.join(_curpath, 'chars.dic'))
+    load_dict_words(os.path.join(_curpath, 'words.dic'))
 
-class Word:
+class Word(object):
     def __init__(self, text = '', freq = 0):
         self.text = text
         self.freq = freq
         self.length = len(text)
 
-class Chunk:
+class Chunk(object):
     def __init__(self, w1, w2 = None, w3 = None):
         self.words = []
         self.words.append(w1)
@@ -84,7 +85,7 @@ class Chunk:
                 sum_tmp += math.log(word.freq)
         return sum_tmp
 
-class SimpleCompare:
+class SimpleCompare(object):
     def take_high_test(self, chunks):
         len_chunk = 0
         result = []
@@ -94,7 +95,7 @@ class SimpleCompare:
                 result = [chunk,]
         return result
 
-class ComplexCompare:
+class ComplexCompare(object):
     def take_high_test(self, chunks, comparator):
         i = 1
         for j in range(1, len(chunks)):
@@ -128,7 +129,7 @@ class ComplexCompare:
         return self.take_high_test(chunks, comparator)
 
 
-class Analysis:
+class Analysis(object):
     def __init__(self, text, simple = True):
         if isinstance(text, unicode):
             self.text = text

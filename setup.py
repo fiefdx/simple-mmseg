@@ -7,12 +7,12 @@ Created on 2017-11-18
 
 from distutils.core import setup
 
-setup(name = 'simple-mmseg',
+setup(name = 'simple_mmseg',
       version = '0.0.1',
       author = 'fiefdx',
       author_email = 'fiefdx@163.com',
-      package_dir = {'simple-mmseg': 'src'},
-      packages = ['simple-mmseg'],
+      package_dir = {'simple_mmseg': 'src'},
+      packages = ['simple_mmseg'],
       package_data = {'': ['chars.dic', 'words.dic']},
       install_package_data = True
       )
