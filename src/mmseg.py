@@ -6,7 +6,6 @@ Created on 2017-11-18
 '''
 
 import os
-import sys
 import string
 import math
 
@@ -68,7 +67,7 @@ class Chunk(object):
         return length
 
     def average_word_length(self):
-        return float(self.total_word_length())/len(self.words)
+        return float(self.total_word_length()) / len(self.words)
 
     def standard_deviation(self):
         average = self.average_word_length()
@@ -92,7 +91,7 @@ class SimpleCompare(object):
         for chunk in chunks:
             if chunk.total_word_length() > len_chunk:
                 len_chunk = chunk.total_word_length()
-                result = [chunk,]
+                result = [chunk]
         return result
 
 class ComplexCompare(object):
@@ -108,22 +107,22 @@ class ComplexCompare(object):
         return chunks[0:i]
 
     # 以下四个函数是mmseg算法的四种过滤原则，核心算法
-    def mmFilter(self,chunks):
+    def mmFilter(self, chunks):
         def comparator(a, b):
             return a.total_word_length() - b.total_word_length()
         return self.take_high_test(chunks, comparator)
 
-    def lawlFilter(self,chunks):
+    def lawlFilter(self, chunks):
         def comparator(a, b):
             return a.average_word_length() - b.average_word_length()
         return self.take_high_test(chunks, comparator)
 
-    def svmlFilter(self,chunks):
+    def svmlFilter(self, chunks):
         def comparator(a, b):
             return b.standard_deviation() - a.standard_deviation()
         return self.take_high_test(chunks, comparator)
 
-    def logFreqFilter(self,chunks):
+    def logFreqFilter(self, chunks):
         def comparator(a, b):
             return a.word_frequency() - b.word_frequency()
         return self.take_high_test(chunks, comparator)
@@ -153,7 +152,7 @@ class Analysis(object):
     def __iter__(self):
         while True:
             token = self.get_next_token()
-            if token == None:
+            if token is None:
                 raise StopIteration
             yield token
 
@@ -175,7 +174,7 @@ class Analysis(object):
             if self.is_chinese_char(self.get_next_char()):
                 token = self.get_chinese_words()
             else:
-                token = self.get_ascii_words() # + '//'
+                token = self.get_ascii_words()
             if len(token) > 0:
                 return token
         return None
@@ -209,7 +208,7 @@ class Analysis(object):
         chunks = self.create_simple_chunks() if self.simple else self.create_chunks()
         if self.simple and len(chunks) > 1:
             chunks = self.simple_compare.take_high_test(chunks)
-        elif self.simple == False:
+        elif self.simple is False:
             if len(chunks) > 1:
                 chunks = self.complex_compare.mmFilter(chunks)
             if len(chunks) > 1:
@@ -222,12 +221,12 @@ class Analysis(object):
         if len(chunks) == 0:
             return ""
 
-        word = [chunks[0].words[0],]
+        word = [chunks[0].words[0]]
         token = ""
         length = 0
         for x in word:
             if x.length != -1:
-                token += x.text # + "/"
+                token += x.text
                 length += len(x.text)
         self.pos += length
         return token
@@ -236,9 +235,6 @@ class Analysis(object):
         chunks = []
         original_pos = self.pos
         words1 = self.get_match_chinese_words()
-        # print "words1: ", [i.text.encode("utf-8") for i in words1]
-        # for i in words1:
-        #     print i.text
 
         for word1 in words1:
             self.pos += len(word1.text)
@@ -249,15 +245,13 @@ class Analysis(object):
                     if self.pos < self.text_length:
                         words3 = self.get_match_chinese_words()
                         for word3 in words3:
-                            # print word3.length, word3.text
                             if word3.length == -1:
-                                chunk = Chunk(word1,word2)
-                                # print "Ture"
-                            else :
-                                chunk = Chunk(word1,word2,word3)
+                                chunk = Chunk(word1, word2)
+                            else:
+                                chunk = Chunk(word1, word2, word3)
                             chunks.append(chunk)
                     elif self.pos == self.text_length:
-                        chunks.append(Chunk(word1,word2))
+                        chunks.append(Chunk(word1, word2))
                     self.pos -= len(word2.text)
             elif self.pos == self.text_length:
                 chunks.append(Chunk(word1))
@@ -296,7 +290,7 @@ class Analysis(object):
             self.pos += 1
             index += 1
 
-            text = self.text[original_pos:self.pos]
+            text = self.text[original_pos: self.pos]
             word = get_dict_word(text)
             if word:
                 words.append(word)
